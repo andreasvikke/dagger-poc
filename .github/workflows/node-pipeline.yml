@@ -1,0 +1,28 @@
+name: 'node ci'
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  dagger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+          cache: npm
+
+      - name: Install
+        run: npm install @dagger.io/dagger
+
+      - name: Install Dagger CLI
+        run: cd /usr/local && { curl -L https://dl.dagger.io/dagger/install.sh | sh; cd -; }
+      
+      - name: Release and deploy with Dagger
+        run: dagger run node ci/index.mjs
